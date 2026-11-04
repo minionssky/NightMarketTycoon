@@ -1,4 +1,8 @@
 import { GameManager, getRecipe } from '/core.js';
+import { mountVisuals, foodIcon } from '/visuals.js';
+const visuals = mountVisuals(document.getElementById('visual-scene'));
+let quality = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'low' : 'full';
+try { const saved = localStorage.getItem('night_market_visual_quality'); if (saved === 'low' || saved === 'full') quality = saved; } catch {}
 const model = new GameManager({
   getItem: key => localStorage.getItem(key),
   setItem: (key, value) => localStorage.setItem(key, value),
@@ -11,22 +15,34 @@ const cards = new Map();
 for (const recipe of model.snapshot.recipes) {
   const card = document.createElement('button'); card.className = 'recipe-card'; card.dataset.recipeId = recipe.id;
   const name = document.createElement('span'), condition = document.createElement('small');
-  card.append(name, condition); document.getElementById('recipe-list').append(card);
+  const copy = document.createElement('span'); copy.className = 'card-copy'; copy.append(name, condition);
+  const icon = foodIcon(recipe.id, !recipe.unlocked);
+  card.append(icon, copy); document.getElementById('recipe-list').append(card);
   card.addEventListener('click', () => { selectedRecipe = recipe.id; render(); });
-  cards.set(recipe.id, { card, name, condition });
+  cards.set(recipe.id, { card, name, condition, unlocked: recipe.unlocked });
 }
+let bookRenderKey = '';
 function renderBook(s) {
+  const key = `${s.totalEarned}:${s.stallLevel}:${selectedRecipe}`;
+  if (bookRenderKey === key) return;
+  bookRenderKey = key;
   const count = s.recipes.filter(r => r.unlocked).length;
   document.getElementById('book-count').textContent = `${count}/${s.recipes.length}`;
   document.getElementById('book-progress').textContent = `已收集 ${count}/${s.recipes.length} · 累计收入 ${s.totalEarned} 金币`;
   for (const recipe of s.recipes) {
-    const { card, name, condition } = cards.get(recipe.id);
+    const row = cards.get(recipe.id), { card, name, condition } = row;
+    if (row.unlocked !== recipe.unlocked) {
+      card.querySelector('svg').replaceWith(foodIcon(recipe.id, !recipe.unlocked)); row.unlocked = recipe.unlocked;
+    }
     card.classList.toggle('locked', !recipe.unlocked); card.setAttribute('aria-pressed', String(selectedRecipe === recipe.id));
     name.textContent = `${recipe.unlocked ? '✦' : '◇'} ${recipe.name}`;
     condition.textContent = recipe.unlocked ? `${recipe.rarity} · 已解锁 · 查看详情` :
       `累计收入 ${recipe.unlock.amount} 金币解锁 · 还差 ${recipe.remainingToUnlock}`;
   }
   const recipe = s.recipes.find(r => r.id === selectedRecipe);
+  const artKey = `${recipe.id}:${recipe.unlocked}`;
+  const detailArt = document.getElementById('detail-art');
+  if (detailArt.dataset.key !== artKey) { detailArt.replaceChildren(foodIcon(recipe.id, !recipe.unlocked)); detailArt.dataset.key = artKey; }
   document.getElementById('recipe-rarity').textContent = `${recipe.chapter} / ${recipe.rarity}`;
   document.getElementById('recipe-name').textContent = recipe.name;
   document.getElementById('recipe-description').textContent = recipe.description;
@@ -34,9 +50,13 @@ function renderBook(s) {
   document.getElementById('recipe-condition').textContent = recipe.unlocked ? '已解锁 · 已加入夜市轮换订单' :
     `尚未解锁 · 累计收入达到 ${recipe.unlock.amount} 金币（还差 ${recipe.remainingToUnlock}）`;
 }
-function render() {
+function render(dt = 0) {
   const s = model.snapshot, o = s.order;
   elements.coins.textContent = s.coins;
+  document.getElementById('level').textContent = `Lv.${s.stallLevel}`;
+  document.getElementById('quality').textContent = `动效：${quality === 'full' ? '完整' : '简洁'}`;
+  document.getElementById('quality').setAttribute('aria-pressed', String(quality === 'low'));
+  visuals.update(s, dt, quality);
   elements.customer.textContent = !o || o.state === 'EXITED' ? '灯火通明，等候新顾客…' :
     o.state === 'WAITING' ? `顾客：来份${getRecipe(o.recipeId).name}！ +${o.income}` :
     o.state === 'COOKING' ? `制作${getRecipe(o.recipeId).name} · ${o.remaining.toFixed(1)} 秒` : `出餐啦！ +${o.income} 金币`;
@@ -55,6 +75,11 @@ function render() {
     dialog.showModal(); model.acknowledgeRecipeUnlock(event.recipeId);
   }
 }
+document.getElementById('quality').addEventListener('click', () => {
+  quality = quality === 'full' ? 'low' : 'full';
+  try { localStorage.setItem('night_market_visual_quality', quality); } catch {}
+  render();
+});
 document.getElementById('open-book').addEventListener('click', () => {
   market.hidden = true; book.hidden = false; render(); document.getElementById('close-book').focus();
 });
@@ -66,8 +91,9 @@ elements.cook.addEventListener('click', () => { model.cook(); render(); });
 elements.upgrade.addEventListener('click', () => { model.upgrade(); render(); });
 let last = performance.now();
 function frame(now) {
-  if (!document.hidden) model.tick(Math.max(0, (now - last) / 1000));
-  last = now; render(); requestAnimationFrame(frame);
+  const dt = document.hidden ? 0 : Math.max(0, (now - last) / 1000);
+  if (!document.hidden) model.tick(dt);
+  last = now; render(dt); requestAnimationFrame(frame);
 }
 document.addEventListener('visibilitychange', () => { last = performance.now(); if (document.hidden) model.save(); });
 window.addEventListener('pagehide', () => model.save());

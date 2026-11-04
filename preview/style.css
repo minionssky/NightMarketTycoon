@@ -1,0 +1,42 @@
+:root { --night:#24133E; --purple:#8C41F6; --pink:#FF3F94; --gold:#FFB347; --cream:#FFF2D8; --mint:#71EFDB; }
+* { box-sizing:border-box } [hidden] { display:none !important }
+body { margin:0; background:#100A1D; color:var(--cream); font-family:system-ui,'Noto Sans CJK SC',sans-serif; }
+button { font:inherit; cursor:pointer; touch-action:manipulation; color:inherit; } button:focus-visible { outline:3px solid var(--mint); outline-offset:3px; }
+main { width:100%; max-width:450px; min-height:100dvh; margin:auto; background:var(--night); border-inline:1px solid #61316F; padding: max(12px,env(safe-area-inset-top)) 18px max(12px,env(safe-area-inset-bottom)); position:relative; }
+header { position:relative; padding:20px 0 8px; } .eyebrow { font-size:10px; letter-spacing:.2em; color:var(--gold); }
+h1 { margin:4px 0 2px; font-size:clamp(30px,8vw,42px); font-weight:950; letter-spacing:-.06em; color:var(--cream); text-shadow:2px 2px 0 #8B2D69,0 0 20px #FF3F9440; }
+header p { margin:0; font-size:11px; color:#C9A7CE; letter-spacing:.15em; }.seal { display:inline-grid; place-items:center; width:27px; height:27px; margin-left:8px; border:1px solid var(--pink); color:var(--pink); font-size:16px; transform:rotate(8deg); vertical-align:middle; }
+#quality { position:absolute; right:0; top:4px; border:1px solid #8F589E; border-radius:20px; padding:5px 9px; font-size:10px; background:#321C4B; min-height:28px; }
+#hud { display:flex; gap:10px; margin-top:12px; transform-origin:center; }
+.wallet,.level-pill { display:flex; align-items:center; padding:10px 12px; border:1px solid #A65B78; border-radius:13px; background:#342045; gap:8px; }
+.wallet { flex:1 } .coin-icon { display:grid; place-items:center; width:30px; height:30px; background:var(--gold); color:#7C3C37; border:3px solid #FFD994; border-radius:50%; font-weight:900; }
+.wallet small,.level-pill small { display:block; color:#D1A8CB; font-size:9px; letter-spacing:.1em; } #coins { font-size:24px; color:var(--gold); font-variant-numeric:tabular-nums; } .level-pill { min-width:88px; } #level { font-size:21px; }
+.scene { position:relative; margin:10px -18px 0; overflow:hidden; border-block:1px solid #653061; }
+#visual-scene { display:block; width:100%; height:auto; aspect-ratio:720/650; }
+#visual-scene text { font-family:inherit; } .order-bubble { position:absolute; right:5%; top:24%; width:46%; border:1px solid var(--gold); border-radius:13px 13px 13px 2px; background:#FFF2D8; color:#522B4F; padding:9px 8px; box-shadow:3px 4px 0 #140C2633; }
+.order-bubble small { display:block; font-size:8px; color:#8F526C; letter-spacing:.1em; margin-bottom:4px; } #customer { margin:0; font-size:clamp(10px,3vw,13px); font-weight:800; line-height:1.5; min-height:30px; }
+.scene-caption { position:absolute; bottom:5px; left:0; right:0; margin:0; text-align:center; color:#B78DA9; font-size:9px; letter-spacing:.16em; }
+.operations { padding-top:10px; } #details { font-size:11px; color:#E1BCD6; margin:0 0 7px; text-align:center; }
+.progress-head { display:flex; align-items:center; justify-content:space-between; color:#B499BA; font-size:9px; } progress { display:block; width:100%; height:7px; border:0; border-radius:8px; overflow:hidden; margin:5px 0 11px; accent-color:var(--gold); background:#40284F; } progress::-webkit-progress-bar{background:#40284F}progress::-webkit-progress-value{background:linear-gradient(90deg,var(--pink),var(--gold));border-radius:8px}
+#cook,#upgrade,.book-link { width:100%; min-height:48px; border-radius:12px; border:1px solid #FF86B7; font-size:17px; font-weight:850; background:var(--pink); box-shadow:0 4px 0 #8D215E; }
+#cook:active:not(:disabled),#upgrade:active:not(:disabled),.book-link:active { transform:translateY(2px);box-shadow:none }
+button:disabled { cursor:default; opacity:.52; } #upgrade { min-height:42px; margin-top:10px; background:#3E2B63; border-color:#9E71E5; box-shadow:0 3px 0 #1A102E; font-size:14px; }
+.book-link { margin-top:12px; min-height:40px; background:transparent; border-color:#7B4E8F; box-shadow:none; font-size:12px; color:var(--gold); }
+#status { font-size:9px; text-align:center; color:#C3A0C7; min-height:14px; margin:10px 0 3px; } footer { font-size:8px; text-align:center; color:#927B9D; }
+#recipe-book { padding-top:14px; }.book-heading h2{font-size:29px;margin:8px 0;color:var(--cream)}.book-heading .eyebrow{color:var(--pink)} #book-progress{font-size:12px;color:var(--gold);margin:8px 0}
+#close-book { margin:4px 0 14px; }.recipe-card { display:grid; grid-template-columns:68px 1fr; width:100%; min-height:100px; text-align:left; margin-bottom:12px; padding:10px; border:1px solid #915C9C; border-radius:14px; background:linear-gradient(110deg,#4C285D,#2A1B43); position:relative; }
+.recipe-card:after { content:'✦'; position:absolute; right:12px; top:10px; font-size:13px; color:var(--gold); } .recipe-card[aria-pressed=true] { border-color:var(--gold); box-shadow:inset 0 0 0 1px #FFB34740; }
+.recipe-card.locked { background:#2C203C; color:#B4A0BE; }.recipe-card.locked:after {content:'◇';color:#A89BB5}.card-copy{align-self:center;padding-left:8px;padding-right:12px}.card-copy>span{font-size:19px;font-weight:850}.card-copy small{display:block;font-size:10px;line-height:1.7;color:#D2B6D1;margin-top:6px}
+.food-icon { display:block;width:64px;height:78px;align-self:center; }.recipe-card.locked .food-icon{opacity:.7} .detail-icon{float:right;width:60px;height:70px}
+#recipe-detail{padding:18px;border:1px solid #B77497;border-radius:14px;background:#372044;overflow-wrap:anywhere}#recipe-rarity{font-size:9px}#recipe-name{font-size:24px;margin:10px 0;color:var(--gold)}#recipe-description,#recipe-stats,#recipe-condition{font-size:12px;line-height:1.8}#recipe-condition{color:var(--mint)}
+dialog{width:min(90vw,390px);max-height:90dvh;overflow:auto;border:1px solid var(--gold);border-radius:20px;background:#342045;color:var(--cream);padding:26px;box-shadow:0 0 0 7px #8C41F620}dialog::backdrop{background:#10091BCE}dialog h2{font-size:26px;color:var(--gold)}dialog p{font-size:15px;line-height:1.8}#dismiss-unlock{border:1px solid #FF86B7;border-radius:10px;padding:12px;width:100%;background:var(--pink);font-weight:800}
+@media(min-width:600px){ main{margin-block:18px;border:1px solid #61316F;border-radius:22px} }
+@media(prefers-reduced-motion:reduce){ *,*:before,*:after{scroll-behavior:auto!important} }
+@media(max-height:740px) {
+  main { padding-top:max(8px,env(safe-area-inset-top)); padding-bottom:max(8px,env(safe-area-inset-bottom)); }
+  header { padding-top:13px; } header p { display:none; } h1{font-size:30px} .eyebrow{font-size:8px}
+  #hud{margin-top:7px}.wallet,.level-pill{padding:6px 10px}#coins{font-size:21px}.coin-icon{width:26px;height:26px}
+  #visual-scene{height:clamp(170px,33dvh,230px);aspect-ratio:auto}.scene{margin-top:8px}.order-bubble{padding:6px;top:13%;width:44%}#customer{font-size:10px;min-height:25px}
+  .operations{padding-top:7px}#details{font-size:10px;margin-bottom:4px}progress{margin:4px 0 7px}#cook{min-height:44px;font-size:15px}#upgrade{min-height:36px;margin-top:7px;font-size:12px}
+  .book-link{min-height:32px;margin-top:8px;font-size:11px}#status{margin-top:7px;font-size:8px}footer{font-size:7px}
+}

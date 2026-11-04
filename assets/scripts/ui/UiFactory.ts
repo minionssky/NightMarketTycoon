@@ -1,4 +1,4 @@
-import { Node, UITransform, Label, Color, Graphics, Button } from 'cc';
+import { Node, UITransform, Label, Color, Graphics, Button, UIOpacity } from 'cc';
 
 export function uiLabel(parent: Node, text: string, x: number, y: number, size: number, color: string): Label {
   const node = new Node('Text'); node.layer = parent.layer; parent.addChild(node); node.setPosition(x, y);
@@ -12,7 +12,9 @@ export function uiPanel(parent: Node, name: string, x: number, y: number, width:
   const node = new Node(name); node.layer = parent.layer; parent.addChild(node); node.setPosition(x, y);
   node.addComponent(UITransform).setContentSize(width, height);
   const graphics = node.addComponent(Graphics); graphics.fillColor = new Color(color);
-  graphics.roundRect(-width / 2, -height / 2, width, height, 18); graphics.fill(); return node;
+  graphics.roundRect(-width / 2, -height / 2, width, height, Math.min(18, width / 2, height / 2)); graphics.fill();
+  graphics.lineWidth = 2; graphics.strokeColor = new Color('#9F629E');
+  graphics.roundRect(-width / 2, -height / 2, width, height, Math.min(18, width / 2, height / 2)); graphics.stroke(); return node;
 }
 export function uiButton(parent: Node, text: string, y: number, color: string, action: () => unknown,
   width = 580, height = 86): [Button, Label] {
@@ -20,6 +22,9 @@ export function uiButton(parent: Node, text: string, y: number, color: string, a
   const button = node.addComponent(Button);
   const label = uiLabel(node, text, 0, 0, 32, '#ffffff');
   label.node.getComponent(UITransform)!.setContentSize(width - 24, height - 12);
-  node.on(Node.EventType.TOUCH_END, () => { if (button.interactable) action(); });
+  const opacity = node.addComponent(UIOpacity);
+  node.on(Node.EventType.TOUCH_START, () => { if (button.interactable) opacity.opacity = 190; });
+  node.on(Node.EventType.TOUCH_CANCEL, () => { opacity.opacity = 255; });
+  node.on(Node.EventType.TOUCH_END, () => { opacity.opacity = 255; if (button.interactable) action(); });
   return [button, label];
 }
