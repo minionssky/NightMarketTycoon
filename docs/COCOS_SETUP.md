@@ -1,4 +1,4 @@
-# Phase 0–2：接入 Cocos Creator 3.8 LTS
+# Phase 0–3：接入 Cocos Creator 3.8 LTS
 
 ## 当前交付与限制
 
@@ -44,7 +44,7 @@ CHROMIUM_PATH=/usr/bin/chromium npm run test:browser
    npm run import:cocos -- /path/to/NightMarketCocos
    ```
 
-   脚本校验编辑器工程 `package.json` 的 `creator.version` 为 3.8.x，并复制四份脚本（GameUI、RecipeBookUI、UiFactory、GameCore）到
+   脚本校验编辑器工程 `package.json` 的 `creator.version` 为 3.8.x，并复制七份脚本（GameUI、RecipeBookUI、UiFactory、GameCore、VisualStyle、VectorArt、NightMarketScene）到
    `assets/night-market/scripts/`；已有目标脚本会拒绝覆盖。
    此脚本只导入源码，不创建或验证工程、场景和构建设置。
 4. 回到 Creator 等待资源导入与脚本编译。由编辑器创建 2D 场景并保存为 `MainGame`；
@@ -85,12 +85,19 @@ CHROMIUM_PATH=/usr/bin/chromium npm run test:browser
   只保存 notifiedRecipeIds 已读提示记录。详见 `RECIPES.md`。
   AdService 仅为可替换接口，不发放广告奖励、不接任何平台服务。
 
-## Phase 2 新增编辑器待验项（未验证）
+## Phase 2–3 新增编辑器待验项（未验证）
 
-- 导入脚本现复制四份源码，仍然只需将 GameUI 挂载到 Canvas 一次。
+- 导入脚本现复制七份源码（含三份 Phase 3 视觉模块），仍然只需将 GameUI 挂载到 Canvas 一次。
   旧导入目录存在时脚本仍拒绝覆盖；请先备份，在新建空白工程或新导入目录执行。
 - 点击“菜谱收藏册”，检查三张卡片、收集进度、锁定条件、详情、返回按钮。
 - 以累计收入跨过 500/2000 的存档测试奶茶/炸串加入订单轮换和一次性弹窗。
 - 组件生成的全部子节点继承父节点 layer；需在编辑器确认 UI 相机可见性和触摸层级。
 - 检查弹窗阻止底层点击、三菜谱文字适配、刘海安全区、后台恢复和微信真机表现。
 - 浏览器自动化结果不能替代上述 Cocos 引擎运行验证。
+
+- 检查 Phase 3 图层：楼房灯牌、招牌、灯笼、摊主、两种顾客、食品、柜台、订单气泡、CTA。
+- 检查顾客入场/等待/笑脸离场、烹饪火焰/蒸汽、单次金币浮字、升级提示和 HUD 跳动。
+- 检查“动效：简洁”关闭移动与粒子但不影响进度、结算、图鉴和存档。
+- 视觉参数与原创程序图形位于 `ui/effects/VisualStyle.ts`；原生渲染使用 Graphics/Label，
+  不需导入浏览器 CSS/DOM/SVG 资源。完整规范见 `VISUAL_STYLE.md`。
+- 以上仍需实际 Creator / 微信设备验证；浏览器截图不是 Cocos 或微信运行截图。

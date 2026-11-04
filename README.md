@@ -11,7 +11,7 @@
 - 美术：霓虹灯牌、紫/玫红/橙金配色、Q版顾客、烧烤火焰与金币特效
 
 ## 当前状态
-**Phase 0–2 已交付经营核心、三种菜谱收集、浏览器图鉴与 Cocos 动态 UI 源码。** 当前云端缺少 Cocos Creator，正式工程初始化、场景预览及微信构建仍未验证。详见 [验证日志](TASKS.md) 和 [Cocos 接入步骤](docs/COCOS_SETUP.md)。
+**Phase 0–3 已交付经营核心、菜谱收集、国潮霓虹夜市与 Q 版人物动效，包含浏览器演示和 Cocos 动态 UI 源码。** 当前云端缺少 Cocos Creator，正式工程初始化、场景预览及微信构建仍未验证。详见 [验证日志](TASKS.md) 和 [Cocos 接入步骤](docs/COCOS_SETUP.md)。
 
 ## 开发流程
 1. Codex 读取 [AGENTS.md](AGENTS.md)、[docs/PRD.md](docs/PRD.md)、[TASKS.md](TASKS.md)。
@@ -56,3 +56,14 @@ Cocos Creator 3.8 LTS 接入：先在编辑器创建 Empty (2D) 工程，再执�
 订单按配置顺序轮换已解锁菜谱，创建时锁定该商品的等级收益与制作时间。
 解锁提示显示时即记录已读，正常保存后重启不会重复；旧版 v1 存档保留全部经营数据。
 详细规则、迁移约定及验证方式见 [RECIPES.md](docs/RECIPES.md)。
+
+## Phase 3 视觉与动效
+
+首页包含原创程序绘制的夜市楼房、招牌、灯笼、摊主与两种顾客形态；烹饪时显示火焰或蒸汽，
+出餐浮动金币，升级显示短提示与数值跳动。图鉴使用同源食品图标、未解锁剪影及收藏卡。
+“动效：完整 / 简洁”可关闭移动、摆动、闪烁与粒子；浏览器首次使用也遵循系统减少动态效果偏好。
+全部动效只观察经营快照，不负责发奖。
+
+色板、时序、原创资源来源、替换规范和截图复现见 [VISUAL_STYLE.md](docs/VISUAL_STYLE.md)。
+`npm run test:browser` 会生成 `artifacts/visuals/` 下普通营业、制作中、图鉴三组截图，
+每组覆盖 320/390/720 宽度；GitHub Actions 上传整个 artifacts 目录。

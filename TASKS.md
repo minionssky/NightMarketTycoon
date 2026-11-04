@@ -30,9 +30,11 @@
 - [x] 兼容 Phase 1 存档，覆盖重复解锁测试
 
 ## Phase 3：视觉效果
-- [ ] 国潮霓虹夜市主界面与 Q 版顾客
-- [ ] 高饱和烹饪特效、金币反馈、升级特效
-- [ ] 多屏幕适配与性能检查
+- [x] 浏览器国潮霓虹夜市主界面与两种 Q 版顾客
+- [x] Cocos 同源矢量/动态 UI 源码与官方 3.8.8 类型检查
+- [x] 浏览器烹饪特效、单次金币反馈、升级特效及 Cocos 对应源码
+- [x] 浏览器 320/390/720 布局、动效降级与节点数量检查
+- [ ] Cocos/微信视觉、触摸、安全区、真机性能与构建验证
 
 ## Phase 4：变现与微信构建
 - [ ] MockAdService、奖励发放去重与失败处理
@@ -113,3 +115,39 @@ Phase 0 的前三项和 Cocos 引擎运行验收保留未勾选。
 图鉴浏览器通过、Cocos 类型检查通过不代表引擎验证通过。
 规则与迁移说明见 `docs/RECIPES.md`，工程接入见 `docs/COCOS_SETUP.md`。
 CI 实际状态以 Phase 2 PR 的 GitHub Actions 检查为准；未自动合并 PR。
+
+### 2026-11-04 · Issue #5 / Phase 3
+
+前置检查：PR #2、#4 均 open / 未合并；Phase 2 head `217a727`。
+`codex/issue-5-neon-visuals` 从 `origin/codex/issue-3-recipes` 创建；
+新 PR base 指向第二阶段分支，不从旧 main 重写，不自动合并前序或新 PR。
+
+实现与范围：
+- 原创程序矢量夜市、远景楼房灯牌、霓虹招牌、灯笼、暖色摊位、柜台、Q 版摊主和两种顾客。
+- VisualStyle 共享色板/图形/Motion 配置；浏览器 SVG/DOM 与 Cocos Graphics/Label 两种渲染。
+- 顾客入场/等待/完成离场、灯牌轻脉冲、灯笼摆动、火焰/蒸汽、金币浮字和升级 HUD 跳动。
+- 图鉴霓虹收藏卡、同源食品图标、未解锁剪影与稀有度；保留全部详情、入口/返回及解锁提示。
+- 完整/简洁模式，独立偏好键，不改经营存档；浏览器首次遵循系统 reduced-motion 偏好。
+- 单一观察时间线、预建小量特效、隐藏经营页跳过图形更新、图鉴内容更新去重。
+- 新增 docs/VISUAL_STYLE.md，列出色板、布局、动画时序、原创来源、资源命名和替换规范。
+- 导入脚本复制七份源码，仍在写入前预检全部目标并拒绝覆盖用户资源。
+
+实际验证（Node v24.22.1 / TypeScript 5.9.3 / 官方 Cocos 类型 3.8.8 / 系统 Chromium）：
+- `npm run typecheck`：业务核心、共享视觉模型、全部 Cocos 动态 UI API 类型检查通过。
+- `npm test`：25 项通过，0 失败（前两阶段 21 项 + 视觉 4 项）。
+  新增验证：表现采样不改业务快照、两种顾客及入场离场、低动效固定变换、
+  重启基线不补播金币/升级、重复观察不重启反馈、程序图形可复现及数量有界。
+- `CHROMIUM_PATH=/usr/bin/chromium npm run test:browser`：8 项通过，0 失败，约 37.1 秒。
+  前两阶段 5 项继续通过；新增 3 项覆盖三种尺寸 CTA 无水平溢出/不重叠/在视口内，
+  制作/升级/图鉴点击、重复制作、特效状态、不同顾客、简洁开关、刷新恢复、系统减少动态效果偏好。
+- 补充视觉专测命令：`CHROMIUM_PATH=/usr/bin/chromium node --test --test-isolation=none tests/browser/visuals.test.mjs`。
+  最终 3 项通过、0 失败，约 9.4 秒；含场景节点少于 400、多单后不累计增长检查。
+- 实际生成九张截图：`artifacts/visuals/{ordinary,cooking,catalog}-{320,390,720}.png`；
+  已查看 390 宽度普通营业/制作中/图鉴及 320 宽度普通营业截图。
+  CI 既有 upload-artifact 将递归上传整个 artifacts 目录；截图非伪造，未作为游戏素材提交。
+- `git diff --check` 通过；AGENTS.md、docs/PRD.md、GameCore.ts 保持原文。
+
+未验证/限制：无 Cocos Creator，未运行引擎视觉预览、触摸/弹窗拦截、安全区、真实工程构建；
+微信开发者工具、真机、后台恢复、低端设备 FPS/内存/GPU 均未实测。
+浏览器可视化与 Cocos 类型检查不等于 Cocos 微信小游戏验证通过；对应验收保留未勾选。
+CI 最终状态以新 PR 检查为准，未自动合并任何 PR。
