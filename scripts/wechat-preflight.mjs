@@ -9,7 +9,7 @@ async function executable(path) {
 }
 /** Read-only readiness check. A discovered binary is not a validated engine, build or device run. */
 export async function inspectWeChatReadiness({ creatorPath, devtoolsPath, projectPath,
-  configPath = fileURLToPath(new URL('../config/wechat.example.json', import.meta.url)) } = {}) {
+  configPath = fileURLToPath(new URL('../config/wechat.json', import.meta.url)) } = {}) {
   const config = JSON.parse(await readFile(configPath, 'utf8'));
   const configValid = /^3\.8\./.test(config.creatorVersion) && config.platform === 'wechatgame' &&
     config.orientation === 'portrait' && config.designResolution?.width === 720 && config.designResolution?.height === 1280 &&

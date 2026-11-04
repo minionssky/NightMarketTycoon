@@ -194,3 +194,11 @@ CI 最终状态以新 PR 检查为准，未自动合并任何 PR。
 浏览器与类型检查不等于 Cocos 微信小游戏通过；真实广告、微信构建和真机项保持未勾选。
 本地时间与存档不是服务端反作弊，也不支持多窗口并行营业；不包含后端、支付或发布审核。
 新 PR 的实际 CI 状态另以 GitHub Actions 为准。
+
+### 2026-11-04 · AppID 补充
+
+已将用户提供的 `wx3f8534584b5b98af` 写入 `config/wechat.json`，预检默认读取项目配置；
+`wechat.example.json` 继续保留可复用占位模板。真实广告继续关闭，没有增加 AppSecret。
+重新运行预检：AppID 格式阻塞已解除，但仍因缺少 Creator、微信开发者工具及正式工程返回 blocked / 退出码 2。
+平台账号权限、实际构建及真机仍未验证。预检测试同步覆盖项目 AppID 与占位模板。
+- AppID 补充验证：`npm run typecheck` 通过；`npm test` 41 项通过、0 失败；`git diff --check` 通过。

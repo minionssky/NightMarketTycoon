@@ -6,16 +6,16 @@
 
 | 项目 | 当前证据 |
 | --- | --- |
-| 规划配置 config/wechat.example.json | 已校验：3.8.8、wechatgame、720×1280、portrait、MainGame、真实广告关闭 |
+| 项目规划配置 config/wechat.json | 已校验：3.8.8、wechatgame、720×1280、portrait、MainGame、真实广告关闭 |
 | Cocos Creator 可执行程序 | 未找到/未提供，未启动编辑器 |
 | 微信开发者工具 | 未找到/未提供，未运行 |
 | 编辑器创建的正式工程 | 尚未初始化/验证，不伪造场景和资源 UUID |
-| AppID | 只有安全占位，需本机合法授权的实际 AppID |
+| AppID | 已配置用户提供的 wx3f8534584b5b98af；账号权限与平台状态未验证 |
 | 实际构建、输出目录、日志 | 无；没有运行构建命令 |
 | 设备安全区、后台恢复、FPS、广告资质 | 未验证/未开通 |
 
 预检只读文件并报告缺失条件；存在路径和 manifest 也不等于编辑器版本正确或构建通过。
-config/wechat.example.json 是规划示例，不是伪造的 Creator/微信生成配置；不能直接冒充 project.config.json。
+config/wechat.json 是项目规划配置，config/wechat.example.json 保留占位模板；二者都不是引擎构建产物。规划配置，不是伪造的 Creator/微信生成配置；不能直接冒充 project.config.json。
 没有提交 AppSecret、真实广告位 ID、账号令牌或生产密钥。
 
 ## 在本机完成准备
@@ -31,7 +31,7 @@ config/wechat.example.json 是规划示例，不是伪造的 Creator/微信生�
    导入器预检八份源码的目标路径，已有任意文件则拒绝覆盖。不覆盖用户工程、场景、贴图或设置。
 4. 在编辑器创建 MainGame 场景，将 GameUI 挂到 Canvas 一次，等待脚本编译。
    配置 720×1280 竖屏设计，检查 SafeArea/Widget；不需手工绑定任务/离线面板属性。
-5. 把自己的真实 AppID 填入本机配置与构建面板，不提交 AppSecret；本阶段继续使用 Mock，真实广告关闭。
+5. 将已配置的 AppID `wx3f8534584b5b98af` 填入编辑器构建面板，并确认登录账号具备该项目权限；不提交 AppSecret。本阶段继续使用 Mock，真实广告关闭。
 6. 可选择检查本机路径（不自动执行这些程序）：
 
    ```sh
@@ -39,8 +39,8 @@ config/wechat.example.json 是规划示例，不是伪造的 Creator/微信生�
      npm run check:wechat -- /path/to/editor-created-project
    ```
 
-   预检仍会提示示例 AppID 需替换；可在本机复制示例并使用 inspectWeChatReadiness 的 configPath
-   校验本机配置，不需将个人配置提交。即使返回 manual-validation-required，也不是成功构建。
+   默认读取 config/wechat.json，AppID 格式已满足预检；账号权限仍需在工具中确认。
+   也可用 inspectWeChatReadiness 的 configPath 校验其他本机配置。即使返回 manual-validation-required，也不是成功构建。
 
 ## 编辑器构建与必要授权步骤（待执行）
 
@@ -65,3 +65,9 @@ config/wechat.example.json 是规划示例，不是伪造的 Creator/微信生�
 - 320/390/720 对应设备布局、刘海与底部手势区、最低目标设备 FPS/内存，记录机型与系统版本。
 
 执行后把真实构建日志、产物位置和设备证据追加到 TASKS.md；只勾选实际验证项。
+
+## AppID 补充记录
+
+用户提供 AppID `wx3f8534584b5b98af`，已写入项目规划配置；占位示例仍保留。
+重新预检后 AppID 缺失阻塞已解除；Creator、开发者工具与正式工程仍缺失，构建/设备验证仍为 false。
+未启用真实广告，未进行平台账号权限验证或实际构建。
