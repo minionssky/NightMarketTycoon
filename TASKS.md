@@ -45,6 +45,16 @@
 - [ ] 在满足平台条件后接入真实广告
 - [ ] 微信开发者工具构建、真机测试
 
+## Issue #9：真实工程集成验收
+- [x] 基于 Phase 4 最新提交检查分支链与工具环境
+- [x] 非覆盖式源码/编辑器扩展安装器、自动 Canvas/Camera/GameUI 挂载源码
+- [x] 官方 API 类型检查、扩展 TypeScript 编译、L1 契约/进程/安全测试
+- [x] 真实构建执行器、独立输出与日志校验、当前 blocked 分级证据
+- [ ] L2：合法 Creator 项目存在，扩展真实执行、引擎编译与运行验证
+- [ ] L3：实际微信小游戏构建与开发者工具预览/账号权限验证
+- [ ] L4：真机玩法、安全区、触摸、后台恢复、性能验证
+- [ ] L5：真实广告（本次不要求，继续禁用）
+
 ## 验证日志
 - 初始化：文档建立；尚未运行游戏、构建或测试。
 
@@ -202,3 +212,47 @@ CI 最终状态以新 PR 检查为准，未自动合并任何 PR。
 重新运行预检：AppID 格式阻塞已解除，但仍因缺少 Creator、微信开发者工具及正式工程返回 blocked / 退出码 2。
 平台账号权限、实际构建及真机仍未验证。预检测试同步覆盖项目 AppID 与占位模板。
 - AppID 补充验证：`npm run typecheck` 通过；`npm test` 41 项通过、0 失败；`git diff --check` 通过。
+
+### 2026-11-04 · Issue #9 / Cocos 工程集成
+
+基线：PR #2/#4/#6/#8 均 open / 未合并；`codex/issue-9-cocos-integration`
+从最新 Phase 4 `8573f305bf1efbff66ae0c2aa89525e582483c74` 创建，base 为 codex/issue-7-monetization。
+没有重开发玩法，也不自动合并。AGENTS.md、docs/PRD.md、GameCore.ts 保持原文；
+GameUI 仅增加只读观测接口，现有经济、订单、菜谱和奖励逻辑未改。
+
+实际环境：Debian GNU/Linux 13 / Linux x64，Node v24.22.1。
+检查 PATH、/opt、/usr/local 及常见工具位置，未发现 CocosCreator、creator、微信开发者工具或 Wine，
+没有编辑器创建的正式工程或导出构建配置。官方 Dashboard 安装文档列出 Windows/macOS，
+本次未拿非官方 Linux 移植、裸引擎或浏览器模拟冒充 Creator。
+
+新增可执行交付：
+- `prepare:cocos`：预检 9 份源码 + 扩展 manifest/2 份编译 JS（12 个目标），同内容跳过、
+  不同内容/符号链接拒绝，任一目标冲突时不执行后续新写入；不生成场景/meta/假资源 UUID。
+- 编辑器扩展：针对编辑器已保存的 MainGame，检查脚本已注册/场景干净，自动配置 Canvas、
+  原生 UI 相机、GameUI 和只读 RuntimeProbe；由真实编辑器 snapshot/save-scene 保存。
+  自定义场景拒绝修改。扩展的真实菜单执行本环境未验证。
+- RuntimeProbe：只在真正 Cocos 运行后观测初始化、顾客、模块节点、画布/相机并输出标记 JSON；
+  不开新订单、不点击/领奖、不写存档，观测结果不等于触摸/视觉/设备性能通过。
+- `validate:cocos`：用真实编辑器导出配置及 meta UUID，shell=false 启动 Creator，保存 argv/退出码/完整日志，
+  强制本次独立输出，接受官方成功码 36 且检查实际微信文件/AppID/portrait；普通 0 或旧文件不算成功。
+- COCOS_INTEGRATION.md 提供本机命令、最少授权/保存步骤、官方接口链接、L1–L5 证据边界。
+  CI 上传真实 blocked 报告及单独命名的 L1 编译扩展产物。
+
+实际命令与结果：
+- `npm run compile:editor`：真实生成扩展 CommonJS，TypeScript 编译成功；**不是引擎/游戏编译**。
+- `npm run typecheck`：业务、UI、运行探针及扩展按官方 @cocos/creator-types 3.8.8 检查通过。
+- `npm test`：50 项通过、0 失败，前序 41 项 + 集成 9 项。
+  新增测试均为 L1：引擎/IPC 契约替身、安装预检/幂等/拒绝覆盖/符号链接，导出配置/UUID 契约，
+  子进程日志/异常、0 与 36 成功码区分、微信输出字段和全新输出目录。
+  临时 filesystem/Node 进程夹具不是合法引擎工程，不作为 L2/L3 证据，不上传为游戏包。
+- `CHROMIUM_PATH=/usr/bin/chromium npm run test:browser`：11 项通过、0 失败，约 44.6 秒，未更改既有 E2E。
+- `npm run validate:cocos`：实际返回退出码 2、status=blocked；command/process/output 为 null，
+  没有引擎进程、引擎日志或游戏产物。实际 JSON 写入 artifacts/integration/<唯一运行目录>/report.json。
+- `git diff --check`：通过。
+
+验收状态：L1 已验证；L2 blocked；L3 blocked；L4 未验证；L5 禁用/不要求。
+没有真实引擎截图、微信工具预览、设备测试或性能结果。下一步需在支持的本机安装/登录 Creator，
+用编辑器新建项目/保存 MainGame、启用项目扩展，然后导出实际微信构建配置并执行验证脚本；
+微信开发者工具登录/扫码与设备仍需用户本机授权。完整步骤见 COCOS_INTEGRATION.md。
+
+- 补充可复现检查：`npm ci --cache /tmp/nightmarket-npm --ignore-scripts` 后重新 typecheck / npm test，通过；未把扩展 TS 编译结果记为引擎编译。

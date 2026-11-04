@@ -3,6 +3,9 @@ import { constants } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+export const sourceScripts = Object.freeze(['GameUI.ts', 'RecipeBookUI.ts', 'ui/UiFactory.ts', 'core/GameCore.ts',
+  'ui/effects/VisualStyle.ts', 'ui/effects/VectorArt.ts', 'ui/effects/NightMarketScene.ts', 'RewardsUI.ts', 'integration/RuntimeProbe.ts']);
+
 /** Import only source scripts into an editor-created 3.8 project. Never fabricate scenes or overwrite assets. */
 export async function importCocos(target) {
   if (!target) throw Error('Usage: npm run import:cocos -- /absolute/path/to/editor-created-project');
@@ -10,9 +13,7 @@ export async function importCocos(target) {
   const manifest = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
   if (!/^3\.8\./.test(manifest.creator?.version ?? '')) throw Error('Requires an editor-created Cocos Creator 3.8.x project');
   await access(resolve(root, 'assets'));
-  const names = ['GameUI.ts', 'RecipeBookUI.ts', 'ui/UiFactory.ts', 'core/GameCore.ts',
-    'ui/effects/VisualStyle.ts', 'ui/effects/VectorArt.ts', 'ui/effects/NightMarketScene.ts', 'RewardsUI.ts'];
-  const plan = await Promise.all(names.map(async name => {
+  const plan = await Promise.all(sourceScripts.map(async name => {
     const source = fileURLToPath(new URL(`../assets/scripts/${name}`, import.meta.url));
     const destination = resolve(root, 'assets/night-market/scripts', name);
     await access(source);

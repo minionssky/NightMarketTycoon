@@ -45,8 +45,8 @@ npm run preview
 已有系统 Chromium 可用 `CHROMIUM_PATH=/usr/bin/chromium npm run test:browser`。
 
 Cocos Creator 3.8 LTS 接入：先在编辑器创建 Empty (2D) 工程，再执行
-`npm run import:cocos -- /absolute/path/to/project`；由编辑器创建 MainGame 场景，
-将 GameUI 挂到 Canvas 一次即可生成交互 UI。导入脚本拒绝覆盖已有脚本。
+`npm run prepare:cocos -- /absolute/path/to/project`；启用项目扩展，在编辑器保存空 MainGame 场景，
+执行 Develop/NightMarket 菜单自动配置 Canvas、相机和脚本。导入器拒绝覆盖不同内容。
 完整步骤与尚未执行的验收见 [COCOS_SETUP.md](docs/COCOS_SETUP.md)。
 
 ## Phase 2 菜谱收集
@@ -79,3 +79,10 @@ Cocos Creator 3.8 LTS 接入：先在编辑器创建 Empty (2D) 工程，再执�
 规则、收入口径和迁移见 [MONETIZATION.md](docs/MONETIZATION.md)。
 `npm run check:wechat` 仅作只读预检，当前缺少环境时返回 blocked / 退出码 2；
 具体本机构建与未验证项见 [WECHAT_BUILD.md](docs/WECHAT_BUILD.md)。
+
+## Issue #9 工程集成工具
+
+新增编辑器扩展、只读运行探针和带完整日志/新输出校验的构建执行器；操作见
+[COCOS_INTEGRATION.md](docs/COCOS_INTEGRATION.md)。`npm run compile:editor` 只是扩展 TypeScript 编译（L1）。
+`npm run validate:cocos` 会记录真实前置条件；当前无 Creator/正式项目，返回 blocked / 退出码 2，
+不能视为 L2 编辑器运行、L3 微信预览或 L4 真机通过。
