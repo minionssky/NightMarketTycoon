@@ -11,7 +11,9 @@ test('source importer accepts a 3.8 manifest fixture and preserves existing file
     await mkdir(join(dir, 'assets'));
     // This is a filesystem test fixture, not a generated or validated Cocos project.
     await writeFile(join(dir, 'package.json'), JSON.stringify({ creator: { version: '3.8.8' } }));
-    const files = await importCocos(dir); assert.equal(files.length, 2);
+    const files = await importCocos(dir); assert.equal(files.length, 4);
+    assert.match(await readFile(files[1], 'utf8'), /class RecipeBookUI/);
+    assert.match(await readFile(files[2], 'utf8'), /node.layer = parent.layer/);
     assert.match(await readFile(files[0], 'utf8'), /class GameUI/);
     await writeFile(files[0], 'existing user changes');
     await assert.rejects(importCocos(dir), /Refusing to overwrite/);

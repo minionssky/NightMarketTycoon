@@ -49,12 +49,12 @@ test('insufficient coins, exact funds, level cap, all economic formulas', () => 
 });
 test('upgrading in WAITING or COOKING preserves locked income and duration', () => {
   for (const cooking of [false, true]) {
-    const g = create({ ...freshSave(), coins: 1000, totalEarned: 1000, stallLevel: 3 });
+    const g = create({ ...freshSave(), coins: 400, totalEarned: 400, stallLevel: 3 });
     arrive(g); if (cooking) g.cook();
     const locked = g.snapshot.order; assert.equal(g.upgrade(), true);
     assert.equal(g.snapshot.order.income, locked.income); assert.equal(g.snapshot.order.duration, 2);
     if (!cooking) g.cook(); g.tick(1.8); assert.equal(g.snapshot.order.state, 'COOKING');
-    g.tick(.2); assert.equal(g.snapshot.totalEarned, 1000 + locked.income);
+    g.tick(.2); assert.equal(g.snapshot.totalEarned, 400 + locked.income);
     arrive(g); assert.equal(g.snapshot.order.duration, 1.8);
     assert.equal(g.snapshot.order.income, EconomyManager.income(4));
   }
