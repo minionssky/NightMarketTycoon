@@ -12,3 +12,6 @@ dist/
 .env
 .env.*
 !.env.example
+
+# Local browser verification evidence
+artifacts/

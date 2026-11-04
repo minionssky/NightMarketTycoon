@@ -1,0 +1,21 @@
+{
+  "name": "night-market-tycoon",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --test --test-isolation=none tests/*.test.mjs",
+    "typecheck": "tsc -p tsconfig.core.json && tsc -p tsconfig.ui.json",
+    "preview": "node scripts/preview.mjs",
+    "test:browser": "node --test --test-isolation=none tests/browser/*.test.mjs",
+    "import:cocos": "node scripts/import-cocos.mjs"
+  },
+  "devDependencies": {
+    "@cocos/creator-types": "3.8.8",
+    "playwright": "1.56.1",
+    "typescript": "5.9.3"
+  }
+}
