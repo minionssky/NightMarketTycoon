@@ -23,7 +23,7 @@ export class NightMarketScene {
   constructor(parent: Node) {
     this.root = new Node('NightMarketScene'); this.root.layer = parent.layer; parent.addChild(this.root);
     this.root.addComponent(UITransform).setContentSize(720, 650);
-    this.root.setPosition(-324, 370); this.root.setScale(.9, .9, 1);
+    this.root.setPosition(-295.2, 320); this.root.setScale(.82, .82, 1);
     vectorArt(this.root, 'Backdrop', backdropArt());
     this.stall = vectorArt(this.root, 'Stall', stallArt());
     this.lanterns = [vectorArt(this.root, 'LanternLeft', lanternArt()), vectorArt(this.root, 'LanternRight', lanternArt())];

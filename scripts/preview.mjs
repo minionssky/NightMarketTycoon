@@ -7,6 +7,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const routes = {
   '/': ['preview/index.html', 'text/html; charset=utf-8'],
   '/game.js': ['preview/game.js', 'text/javascript; charset=utf-8'],
+  '/monetization.js': ['preview/monetization.js', 'text/javascript; charset=utf-8'],
   '/visuals.js': ['preview/visuals.js', 'text/javascript; charset=utf-8'],
   '/style.css': ['preview/style.css', 'text/css; charset=utf-8'],
   '/visual-style.js': ['assets/scripts/ui/effects/VisualStyle.ts', 'text/javascript; charset=utf-8'],

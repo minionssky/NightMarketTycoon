@@ -11,7 +11,7 @@
 - 美术：霓虹灯牌、紫/玫红/橙金配色、Q版顾客、烧烤火焰与金币特效
 
 ## 当前状态
-**Phase 0–3 已交付经营核心、菜谱收集、国潮霓虹夜市与 Q 版人物动效，包含浏览器演示和 Cocos 动态 UI 源码。** 当前云端缺少 Cocos Creator，正式工程初始化、场景预览及微信构建仍未验证。详见 [验证日志](TASKS.md) 和 [Cocos 接入步骤](docs/COCOS_SETUP.md)。
+**Phase 0–4 已交付经营核心、菜谱收集、霓虹夜市、离线收益、每日任务和 Mock 激励入口，包含浏览器演示与 Cocos 动态 UI 源码。** 当前云端缺少 Cocos Creator，正式工程初始化、场景预览及微信构建仍未验证。详见 [验证日志](TASKS.md) 和 [Cocos 接入步骤](docs/COCOS_SETUP.md)。
 
 ## 开发流程
 1. Codex 读取 [AGENTS.md](AGENTS.md)、[docs/PRD.md](docs/PRD.md)、[TASKS.md](TASKS.md)。
@@ -67,3 +67,15 @@ Cocos Creator 3.8 LTS 接入：先在编辑器创建 Empty (2D) 工程，再执�
 色板、时序、原创资源来源、替换规范和截图复现见 [VISUAL_STYLE.md](docs/VISUAL_STYLE.md)。
 `npm run test:browser` 会生成 `artifacts/visuals/` 下普通营业、制作中、图鉴三组截图，
 每组覆盖 320/390/720 宽度；GitHub Actions 上传整个 artifacts 目录。
+
+## Phase 4 回访与自愿激励
+
+首页“离线收益”可免费领取离线金币，最多计入 4 小时；“任务”显示北京时间每日进度，
+完成 5 单、15 单、收取 300 金币分别领取固定奖励，每项每日一次。
+离线额外一倍和最新订单额外奖励为自愿 **Mock 模拟**，可选择完成、提前关闭、失败、重复回调；
+不观看也能正常经营和领取普通奖励。当前没有启用真实微信广告。
+
+新奖励与领取记录一起保存，写失败不发奖励，可重试；旧版存档保留经营数据。
+规则、收入口径和迁移见 [MONETIZATION.md](docs/MONETIZATION.md)。
+`npm run check:wechat` 仅作只读预检，当前缺少环境时返回 blocked / 退出码 2；
+具体本机构建与未验证项见 [WECHAT_BUILD.md](docs/WECHAT_BUILD.md)。

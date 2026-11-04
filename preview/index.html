@@ -11,6 +11,7 @@
   <section id="market">
     <div id="hud"><div class="wallet"><span class="coin-icon" aria-hidden="true">金</span><div><small>今晚的收获</small><strong id="coins">0</strong></div></div>
       <div class="level-pill"><div><small>摊位等级</small><strong id="level">Lv.1</strong></div></div></div>
+    <div class="visit-links"><button id="open-tasks">任务</button><button id="open-offline">离线收益</button></div>
     <section class="scene" aria-label="夜市场景">
       <svg id="visual-scene" viewBox="0 0 720 650" role="img" aria-label="原创矢量夜市、摊主和顾客"></svg>
       <div class="order-bubble"><small>夜市来客 · 今日点单</small><p id="customer" aria-live="polite">等候顾客…</p></div>
@@ -30,5 +31,15 @@
   </section>
   <dialog id="unlock-dialog" aria-labelledby="unlock-title"><div class="eyebrow">NEW RECIPE / 新的烟火</div>
     <h2 id="unlock-title">新菜谱解锁</h2><p id="unlock-message"></p><button id="dismiss-unlock">收进收藏册</button></dialog>
+  <dialog id="rewards-dialog" aria-labelledby="rewards-title">
+    <button id="close-rewards" class="dialog-close">关闭 / 取消</button><h2 id="rewards-title"></h2>
+    <section id="tasks-panel"><p id="daily-period"></p><div id="task-list"></div></section>
+    <section id="offline-panel" hidden><p id="offline-summary"></p><button id="claim-offline">免费领取普通收益</button>
+      <button id="offline-ad">自愿 Mock 模拟 · 额外一倍</button></section>
+    <section class="mock-panel"><p>仅本地 Mock 模拟，未启用真实微信广告。不观看也能正常经营、领取普通收益和任务。</p>
+      <label for="mock-mode">模拟结果</label><select id="mock-mode"><option value="complete">模拟完成</option><option value="cancel">模拟提前关闭</option><option value="error">模拟加载失败</option><option value="duplicate">模拟重复回调</option></select>
+      <button id="order-ad">完成一单后可领取额外奖励</button></section>
+    <p id="reward-status" role="status" aria-live="polite"></p>
+  </dialog>
   <p id="status" aria-live="polite"></p><footer>独立核心玩法演示 · 非 Cocos 编辑器预览</footer>
 </main><script type="module" src="/game.js"></script></body></html>

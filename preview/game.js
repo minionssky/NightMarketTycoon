@@ -1,5 +1,6 @@
-import { GameManager, getRecipe } from '/core.js';
+import { GameManager, getRecipe, MockAdService } from '/core.js';
 import { mountVisuals, foodIcon } from '/visuals.js';
+import { mountMonetization } from '/monetization.js';
 const visuals = mountVisuals(document.getElementById('visual-scene'));
 let quality = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'low' : 'full';
 try { const saved = localStorage.getItem('night_market_visual_quality'); if (saved === 'low' || saved === 'full') quality = saved; } catch {}
@@ -7,6 +8,7 @@ const model = new GameManager({
   getItem: key => localStorage.getItem(key),
   setItem: (key, value) => localStorage.setItem(key, value),
 });
+const rewards = mountMonetization(model, new MockAdService(), () => render());
 const elements = Object.fromEntries(['coins', 'customer', 'details', 'progress', 'cook', 'upgrade', 'status'].map(id => [id, document.getElementById(id)]));
 let selectedRecipe = 'sausage';
 const book = document.getElementById('recipe-book'), market = document.getElementById('market');
@@ -68,8 +70,8 @@ function render(dt = 0) {
   elements.upgrade.textContent = s.upgradeCost === null ? '已满级 Lv.10' : `升级摊位 · ${s.upgradeCost} 金币`;
   elements.status.textContent = s.saveStatus === 'unavailable' ? '存档暂不可用，本次进度仅保留在内存' :
     s.saveStatus === 'recovered' ? '存档异常，已安全恢复初始摊位' : '自动存档 · 今晚也要好好营业';
-  renderBook(s);
-  if (!dialog.open && s.unlockNotifications.length) {
+  renderBook(s); rewards.update(s);
+  if (!rewards.open && !dialog.open && s.unlockNotifications.length) {
     const event = s.unlockNotifications[0];
     document.getElementById('unlock-message').textContent = `${getRecipe(event.recipeId).name}已加入收藏册与经营订单！`;
     dialog.showModal(); model.acknowledgeRecipeUnlock(event.recipeId);
@@ -95,6 +97,6 @@ function frame(now) {
   if (!document.hidden) model.tick(dt);
   last = now; render(dt); requestAnimationFrame(frame);
 }
-document.addEventListener('visibilitychange', () => { last = performance.now(); if (document.hidden) model.save(); });
+document.addEventListener('visibilitychange', () => { last = performance.now(); if (document.hidden) model.save(); else model.resume(); });
 window.addEventListener('pagehide', () => model.save());
 render(); requestAnimationFrame(frame);

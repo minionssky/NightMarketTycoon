@@ -1,0 +1,14 @@
+{
+  "creatorVersion": "3.8.8",
+  "platform": "wechatgame",
+  "designResolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "orientation": "portrait",
+  "startScene": "MainGame",
+  "appId": "wx3f8534584b5b98af",
+  "realAdsEnabled": false,
+  "rewardedAdUnitId": "",
+  "note": "AppID supplied by project owner. Planning configuration only; apply settings in Creator. No AppSecret or production ad credentials."
+}
