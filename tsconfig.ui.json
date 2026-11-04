@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.core.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "types": [],
+    "skipLibCheck": true
+  },
+  "include": [
+    "assets/scripts/**/*.ts",
+    "node_modules/@cocos/creator-types/engine.d.ts"
+  ]
+}
