@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 import { mkdtemp, mkdir, writeFile, readFile, rm, access, symlink, unlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -108,7 +109,7 @@ async function exportFixture(dir) {
 test('build input checks: exported UUID/AppID/portrait contract only; rejects planning JSON and mismatched meta', async () => temporary(async dir => {
   const { path, config } = await exportFixture(dir);
   assert.equal((await inspectBuildInputs(dir, path, 'wx3f8534584b5b98af')).config.startScene, config.startScene);
-  await assert.rejects(inspectBuildInputs(dir, new URL('../config/wechat.json', import.meta.url), 'wx3f8534584b5b98af'));
+  await assert.rejects(inspectBuildInputs(dir, fileURLToPath(new URL('../config/wechat.json', import.meta.url)), 'wx3f8534584b5b98af'), /editor-exported/);
   await writeFile(join(dir, 'assets/night-market/MainGame.scene.meta'), JSON.stringify({ uuid: randomUUID() }));
   await assert.rejects(inspectBuildInputs(dir, path, 'wx3f8534584b5b98af'), /meta UUID/);
 }));
