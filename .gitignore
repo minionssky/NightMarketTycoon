@@ -1,0 +1,14 @@
+# Cocos Creator generated/cache
+library/
+temp/
+local/
+build/
+profiles/v2/packages/
+node_modules/
+coverage/
+dist/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
