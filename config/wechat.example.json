@@ -1,0 +1,11 @@
+{
+  "creatorVersion": "3.8.8",
+  "platform": "wechatgame",
+  "designResolution": { "width": 720, "height": 1280 },
+  "orientation": "portrait",
+  "startScene": "MainGame",
+  "appId": "__YOUR_APP_ID__",
+  "realAdsEnabled": false,
+  "rewardedAdUnitId": "",
+  "note": "Planning example only. Set actual options in the editor; no secrets, generated scenes or production credentials."
+}

@@ -2,8 +2,9 @@ import {
   _decorator, Component, Node, UITransform, Label, Color, Graphics, Button,
   Widget, SafeArea, view, ResolutionPolicy, sys, game, Game, BlockInputEvents, UIOpacity,
 } from 'cc';
-import { GameManager, getRecipe } from './core/GameCore';
+import { GameManager, getRecipe, MockAdService } from './core/GameCore';
 import { RecipeBookUI } from './RecipeBookUI';
+import { RewardsUI } from './RewardsUI';
 import { uiLabel, uiPanel, uiButton } from './ui/UiFactory';
 import { NightMarketScene } from './ui/effects/NightMarketScene';
 import { Palette } from './ui/effects/VisualStyle';
@@ -14,6 +15,9 @@ const { ccclass } = _decorator;
 @ccclass('GameUI')
 export class GameUI extends Component {
   private model!: GameManager;
+  private rewards!: RewardsUI;
+  private tasksLabel!: Label;
+  private offlineLabel!: Label;
   private scene!: NightMarketScene;
   private quality: VisualQuality = 'full';
   private qualityLabel!: Label;
@@ -70,6 +74,10 @@ export class GameUI extends Component {
     this.levelLabel = this.label('', 205, 425, 29, Palette.cream);
     this.levelLabel.node.getComponent(UITransform)!.setContentSize(220, 70);
     this.scene = new NightMarketScene(this.market);
+    const [tasksButton, tasksLabel] = uiButton(this.market, '任务', 360, '#50345F', () => this.rewards.open('tasks'), 300, 48);
+    tasksButton.node.setPosition(-165, 360); this.tasksLabel = tasksLabel; tasksLabel.fontSize = 22;
+    const [offlineButton, offlineLabel] = uiButton(this.market, '离线收益', 360, '#50345F', () => this.rewards.open('offline'), 300, 48);
+    offlineButton.node.setPosition(165, 360); this.offlineLabel = offlineLabel; offlineLabel.fontSize = 22;
     this.panel('OrderBubble', 175, 160, 320, 110, Palette.cream);
     this.customer = this.label('', 175, 160, 25, '#522B4F');
     this.customer.node.getComponent(UITransform)!.setContentSize(300, 98);
@@ -87,6 +95,7 @@ export class GameUI extends Component {
     this.book = new RecipeBookUI(this.stage, this.model.snapshot, () => {
       this.book.root.active = false; this.market.active = true;
     }, () => this.render());
+    this.rewards = new RewardsUI(this.stage, this.model, new MockAdService(), () => this.render());
     this.notice = new Node('UnlockNotice'); this.notice.layer = this.stage.layer; this.stage.addChild(this.notice);
     this.notice.addComponent(UITransform).setContentSize(720, 1280);
     this.notice.addComponent(BlockInputEvents);
@@ -110,7 +119,7 @@ export class GameUI extends Component {
     return uiButton(this.market, text, y, color, () => { action(); this.render(); });
   }
   private onHide(): void { this.paused = true; this.model.save(); }
-  private onShow(): void { this.paused = false; }
+  private onShow(): void { this.model.resume(); this.paused = false; }
   update(dt: number): void {
     if (!this.model || this.paused) return;
     this.model.tick(dt); this.render(dt);
@@ -140,8 +149,10 @@ export class GameUI extends Component {
     this.status.string = s.saveStatus === 'unavailable' ? '存档暂不可用，本次进度仅保留在内存' :
       s.saveStatus === 'recovered' ? '存档异常，已安全恢复初始摊位' : '自动存档 · 今晚也要好好营业';
     this.bookLabel.string = `菜谱收藏册 · ${s.recipes.filter(recipe => recipe.unlocked).length}/${s.recipes.length}`;
-    this.book.render(s);
-    if (!this.notice.active && s.unlockNotifications.length) {
+    this.book.render(s); this.rewards.render();
+    this.tasksLabel.string = `任务${s.tasks.some(task => task.ready) ? ' · 可领' : ''}`;
+    this.offlineLabel.string = `离线收益${s.offline && !s.offline.baseClaimed ? ' · 可领' : ''}`;
+    if (!this.rewards.root.active && !this.notice.active && s.unlockNotifications.length) {
       const event = s.unlockNotifications[0];
       this.noticeText.string = `${getRecipe(event.recipeId).name}已加入图鉴与经营！`;
       this.notice.active = true; this.model.acknowledgeRecipeUnlock(event.recipeId);

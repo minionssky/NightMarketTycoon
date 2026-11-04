@@ -37,8 +37,11 @@
 - [ ] Cocos/微信视觉、触摸、安全区、真机性能与构建验证
 
 ## Phase 4：变现与微信构建
-- [ ] MockAdService、奖励发放去重与失败处理
-- [ ] 完整营业任务与离线收益
+- [x] MockAdService、唯一请求 ID、异步竞争/重复回调去重与失败处理（核心/浏览器验证）
+- [x] 免费离线收益、4 小时上限、北京时间每日三任务、兼容存档和领取事务
+- [x] 浏览器与 Cocos RewardsUI 源码同步、官方类型检查、非覆盖式导入
+- [x] 微信安全配置示例、只读预检与本机验收清单
+- [ ] Cocos/微信任务与离线生命周期、真实设备验证
 - [ ] 在满足平台条件后接入真实广告
 - [ ] 微信开发者工具构建、真机测试
 
@@ -151,3 +154,43 @@ CI 实际状态以 Phase 2 PR 的 GitHub Actions 检查为准；未自动合并 
 微信开发者工具、真机、后台恢复、低端设备 FPS/内存/GPU 均未实测。
 浏览器可视化与 Cocos 类型检查不等于 Cocos 微信小游戏验证通过；对应验收保留未勾选。
 CI 最终状态以新 PR 检查为准，未自动合并任何 PR。
+
+### 2026-11-04 · Issue #7 / Phase 4
+
+开始已核对 PR #2、#4、#6：均 open / 未合并。分支 `codex/issue-7-monetization`
+从第三阶段 `origin/codex/issue-5-neon-visuals` 最新 `2dfcd6f` 创建，新 PR base 指向该分支。
+未从旧 main 重写，未自动合并任何 PR。原经营、菜谱、霓虹视觉和简洁模式保留。
+
+交付：
+- 离线基础 0.1 金币/秒 × 1.2^(L-1)，最多 4 小时，整数/有限时间校验、单调水位，
+  普通免费领取和自愿额外一倍分开；完整区间只结算一次，超过上限的时间不能刷新分段再领。
+- 北京时间 UTC+8 自然日任务：5 单/15 单/收取 300 金币，奖励 30/80/60；
+  迁移不把历史数据当进度，任务奖励不推动任务自身，所有新增收入仍推动统一累计收入解锁。
+- IRewardAdService、Mock 完成/提前关闭/失败/重复回调，两种自愿入口与唯一 request ID；
+  busy 保护、异步锁定原订单金额、领奖与 receipt 原子保存、刷新旧实例 revision 检查。
+- 保留 v1 键与 version，新增可选 progress schema=1；经营字段与 notifiedRecipeIds 保留，
+  新字段损坏只重建新状态，不发历史任务/广告奖励。真实广告适配器仅环境检查并明确 disabled。
+- 浏览器和 Cocos 动态 RewardsUI 同步有入口、进度、普通领取、Mock 结果切换、关闭/取消和失败提示；
+  导入器扩展至八份源码，仍预检全部目标并拒绝覆盖。
+- 新增 MONETIZATION.md、WECHAT_BUILD.md、wechat.example.json、只读预检脚本；CI 保存预检 JSON。
+
+实际执行（Node v24.22.1 / TypeScript 5.9.3 / Cocos 类型 3.8.8 / 系统 Chromium）：
+- `npm run typecheck`：核心与全部 Cocos UI 官方 API 类型检查通过。
+- `npm test`：41 项通过，0 失败（前序 25 项 + Phase 4 核心 14 项 + 微信预检 2 项）。
+  覆盖离线 0/倒退/非法时间/4 小时上限、刷新重复领取、旧/损坏新字段迁移，
+  每日三任务达标/日切/倒退/恢复/只领一次、Mock 完成/跳过/失败/重复/异常，
+  异步竞争及制作/升级期间金额锁定、旧回调不覆盖新存档、写失败无奖励且可重试。
+- `CHROMIUM_PATH=/usr/bin/chromium npm run test:browser`：11 项通过，0 失败，约 45 秒。
+  原 8 项全部保留；新增 3 项验证离线免费领取、Mock 关闭/失败重试与重复回调一次发奖、
+  解锁一致、任务断点恢复和只领一次、三宽度任务面板、存储失败提示/重试。
+- 已查看 artifacts/phase4/offline-390.png、tasks-320.png；另生成 tasks-390/720.png，
+  原三组视觉截图继续生成；既有 CI upload-artifact 递归上传整个 artifacts 目录。
+- `node scripts/wechat-preflight.mjs`：实际退出码 2、status=blocked，规划配置有效，
+  缺少 Creator、微信开发者工具、正式引擎工程和实际授权 AppID。buildValidated/deviceValidated 均 false。
+- `git diff --check`：通过。AGENTS.md、docs/PRD.md 未修改。
+
+未验证/边界：无 Creator 和微信开发者工具，未执行合法工程创建、引擎预览、
+实际构建、触摸/安全区、后台返回、真机 FPS/内存/GPU 或真实广告开通/回调。
+浏览器与类型检查不等于 Cocos 微信小游戏通过；真实广告、微信构建和真机项保持未勾选。
+本地时间与存档不是服务端反作弊，也不支持多窗口并行营业；不包含后端、支付或发布审核。
+新 PR 的实际 CI 状态另以 GitHub Actions 为准。

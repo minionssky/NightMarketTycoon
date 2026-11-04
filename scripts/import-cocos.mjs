@@ -11,7 +11,7 @@ export async function importCocos(target) {
   if (!/^3\.8\./.test(manifest.creator?.version ?? '')) throw Error('Requires an editor-created Cocos Creator 3.8.x project');
   await access(resolve(root, 'assets'));
   const names = ['GameUI.ts', 'RecipeBookUI.ts', 'ui/UiFactory.ts', 'core/GameCore.ts',
-    'ui/effects/VisualStyle.ts', 'ui/effects/VectorArt.ts', 'ui/effects/NightMarketScene.ts'];
+    'ui/effects/VisualStyle.ts', 'ui/effects/VectorArt.ts', 'ui/effects/NightMarketScene.ts', 'RewardsUI.ts'];
   const plan = await Promise.all(names.map(async name => {
     const source = fileURLToPath(new URL(`../assets/scripts/${name}`, import.meta.url));
     const destination = resolve(root, 'assets/night-market/scripts', name);

@@ -40,3 +40,7 @@ dialog{width:min(90vw,390px);max-height:90dvh;overflow:auto;border:1px solid var
   .operations{padding-top:7px}#details{font-size:10px;margin-bottom:4px}progress{margin:4px 0 7px}#cook{min-height:44px;font-size:15px}#upgrade{min-height:36px;margin-top:7px;font-size:12px}
   .book-link{min-height:32px;margin-top:8px;font-size:11px}#status{margin-top:7px;font-size:8px}footer{font-size:7px}
 }
+.visit-links{display:flex;gap:8px;margin-top:7px}.visit-links button{flex:1;min-height:32px;border:1px solid #8F589E;border-radius:9px;background:#342045;color:var(--gold);font-size:11px}
+#rewards-dialog{font-size:12px;padding:18px}#rewards-dialog p{font-size:12px}#rewards-dialog h2{font-size:23px}#rewards-dialog button{min-height:36px;border:1px solid #AD71B2;border-radius:9px;background:#5B3471;padding:7px 9px;font-size:12px}#rewards-dialog button:disabled{opacity:.5}
+.dialog-close{float:right}.task-row{padding:8px 0;border-bottom:1px solid #755078}.task-row p{margin:5px 0}.task-row button{width:100%}.mock-panel{border-top:1px solid #A66192;margin-top:15px;padding-top:7px}#rewards-dialog select{width:100%;min-height:34px;background:#251338;color:var(--cream);border:1px solid #A66DA8;border-radius:7px;margin:7px 0}#rewards-dialog section>button{width:100%;margin-top:8px}#reward-status{min-height:22px;color:var(--mint)}
+@media(max-height:740px){#visual-scene{height:clamp(135px,26dvh,194px)}}
