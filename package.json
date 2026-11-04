@@ -7,15 +7,19 @@
     "node": ">=24"
   },
   "scripts": {
-    "test": "node --test --test-isolation=none tests/*.test.mjs",
-    "typecheck": "tsc -p tsconfig.core.json && tsc -p tsconfig.ui.json",
+    "test": "npm run compile:editor && node --test --test-isolation=none tests/*.test.mjs",
+    "typecheck": "tsc -p tsconfig.core.json && tsc -p tsconfig.ui.json && tsc -p tsconfig.editor.json --noEmit",
     "preview": "node scripts/preview.mjs",
     "test:browser": "node --test --test-isolation=none tests/browser/*.test.mjs",
     "import:cocos": "node scripts/import-cocos.mjs",
-    "check:wechat": "node scripts/wechat-preflight.mjs"
+    "check:wechat": "node scripts/wechat-preflight.mjs",
+    "compile:editor": "tsc -p tsconfig.editor.json",
+    "prepare:cocos": "npm run compile:editor && node scripts/prepare-cocos.mjs",
+    "validate:cocos": "node scripts/validate-cocos.mjs"
   },
   "devDependencies": {
     "@cocos/creator-types": "3.8.8",
+    "@types/node": "24.10.0",
     "playwright": "1.56.1",
     "typescript": "5.9.3"
   }

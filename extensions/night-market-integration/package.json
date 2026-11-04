@@ -1,0 +1,14 @@
+{
+  "name": "night-market-integration",
+  "version": "0.1.0",
+  "package_version": 2,
+  "type": "commonjs",
+  "editor": ">=3.8.0 <3.9.0",
+  "description": "Populate an editor-created empty MainGame scene without rewriting gameplay or existing content.",
+  "main": "./dist/main.js",
+  "contributions": {
+    "scene": { "script": "./dist/scene.js" },
+    "menu": [{ "path": "Develop/NightMarket", "label": "Populate saved MainGame scene", "message": "populate-main-game" }],
+    "messages": { "populate-main-game": { "methods": ["populateMainGame"] } }
+  }
+}

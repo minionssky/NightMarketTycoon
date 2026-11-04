@@ -100,7 +100,7 @@ lastSaveTime/cursor 只前进，不因调回时钟而降低。时间早于水位
 
 浏览器首页与 Cocos GameUI 均有“任务”“离线收益”，对应 RewardsUI/DOM 面板有关闭/取消、
 领取状态、清晰失败提示和 Mock 结果切换；领奖期间的菜谱解锁提示等待当前面板关闭后展示。
-新增源代码无浏览器 DOM API 进入 Cocos。非覆盖导入器现复制八份源码。
+新增源代码无浏览器 DOM API 进入 Cocos。非覆盖导入器现复制九份源码（含 Issue #9 只读运行探针）；自动安装与场景挂载见 COCOS_INTEGRATION.md。
 
 ```sh
 npm ci

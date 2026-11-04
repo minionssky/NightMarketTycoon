@@ -158,6 +158,8 @@ export class GameUI extends Component {
       this.notice.active = true; this.model.acknowledgeRecipeUnlock(event.recipeId);
     }
   }
+  /** Read-only integration observation; does not drive gameplay or write storage. */
+  getValidationSnapshot() { return this.model ? this.model.snapshot : null; }
   onDestroy(): void {
     game.off(Game.EVENT_HIDE, this.onHide, this); game.off(Game.EVENT_SHOW, this.onShow, this);
     this.model?.save();

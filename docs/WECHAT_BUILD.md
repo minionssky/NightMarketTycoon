@@ -15,7 +15,7 @@
 | 设备安全区、后台恢复、FPS、广告资质 | 未验证/未开通 |
 
 预检只读文件并报告缺失条件；存在路径和 manifest 也不等于编辑器版本正确或构建通过。
-config/wechat.json 是项目规划配置，config/wechat.example.json 保留占位模板；二者都不是引擎构建产物。规划配置，不是伪造的 Creator/微信生成配置；不能直接冒充 project.config.json。
+config/wechat.json 是项目规划配置，config/wechat.example.json 保留占位模板；二者都不是引擎构建产物。这些规划配置不能冒充编辑器生成的 project.config.json。
 没有提交 AppSecret、真实广告位 ID、账号令牌或生产密钥。
 
 ## 在本机完成准备
@@ -28,7 +28,7 @@ config/wechat.json 是项目规划配置，config/wechat.example.json 保留占�
    npm run import:cocos -- /absolute/path/to/editor-created-project
    ```
 
-   导入器预检八份源码的目标路径，已有任意文件则拒绝覆盖。不覆盖用户工程、场景、贴图或设置。
+   导入器预检九份源码（含只读 RuntimeProbe）的目标路径，已有任意文件则拒绝覆盖。不覆盖用户工程、场景、贴图或设置。
 4. 在编辑器创建 MainGame 场景，将 GameUI 挂到 Canvas 一次，等待脚本编译。
    配置 720×1280 竖屏设计，检查 SafeArea/Widget；不需手工绑定任务/离线面板属性。
 5. 将已配置的 AppID `wx3f8534584b5b98af` 填入编辑器构建面板，并确认登录账号具备该项目权限；不提交 AppSecret。本阶段继续使用 Mock，真实广告关闭。
@@ -71,3 +71,10 @@ config/wechat.json 是项目规划配置，config/wechat.example.json 保留占�
 用户提供 AppID `wx3f8534584b5b98af`，已写入项目规划配置；占位示例仍保留。
 重新预检后 AppID 缺失阻塞已解除；Creator、开发者工具与正式工程仍缺失，构建/设备验证仍为 false。
 未启用真实广告，未进行平台账号权限验证或实际构建。
+
+## Issue #9：集成与真实构建执行器
+
+现有预检之外，新增 `prepare:cocos` 安装已编译编辑器扩展，以及 `validate:cocos` 执行器。
+后者在有真实工程、Creator 和编辑器导出配置时，会以独立输出目录启动实际构建，保存 argv、完整日志、
+成功码 36 与微信文件校验结果，不复用旧产物。软件缺失时明确返回 blocked，不执行假构建。
+操作、官方 API 依据、分级证据边界见 COCOS_INTEGRATION.md；当前仍只有 L1 验证，L2–L4 未通过。

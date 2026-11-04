@@ -44,7 +44,7 @@ CHROMIUM_PATH=/usr/bin/chromium npm run test:browser
    npm run import:cocos -- /path/to/NightMarketCocos
    ```
 
-   脚本校验编辑器工程 `package.json` 的 `creator.version` 为 3.8.x，并复制八份脚本（GameUI、RecipeBookUI、RewardsUI、UiFactory、GameCore、VisualStyle、VectorArt、NightMarketScene）到
+   脚本校验编辑器工程 `package.json` 的 `creator.version` 为 3.8.x，并复制九份脚本（含只读 RuntimeProbe）到
    `assets/night-market/scripts/`；已有目标脚本会拒绝覆盖。
    此脚本只导入源码，不创建或验证工程、场景和构建设置。
 4. 回到 Creator 等待资源导入与脚本编译。由编辑器创建 2D 场景并保存为 `MainGame`；
@@ -87,7 +87,7 @@ CHROMIUM_PATH=/usr/bin/chromium npm run test:browser
 
 ## Phase 2–3 新增编辑器待验项（未验证）
 
-- 导入脚本现复制八份源码（含三份 Phase 3 视觉模块与 RewardsUI），仍然只需将 GameUI 挂载到 Canvas 一次。
+- 导入脚本现复制九份源码（含三份 Phase 3 视觉模块与 RewardsUI），仍然只需将 GameUI 挂载到 Canvas 一次。
   旧导入目录存在时脚本仍拒绝覆盖；请先备份，在新建空白工程或新导入目录执行。
 - 点击“菜谱收藏册”，检查三张卡片、收集进度、锁定条件、详情、返回按钮。
 - 以累计收入跨过 500/2000 的存档测试奶茶/炸串加入订单轮换和一次性弹窗。
@@ -105,10 +105,19 @@ CHROMIUM_PATH=/usr/bin/chromium npm run test:browser
 ## Phase 4 营业奖励与微信准备（引擎运行仍未验证）
 
 - 首页新增任务和离线入口。RewardsUI 与浏览器共用 GameManager、MockAdService 及领取事务，
-  不需要属性拖拽绑定，不引入 DOM 到 Cocos。导入器现复制八份源码，仍拒绝覆盖任何目标文件。
+  不需要属性拖拽绑定，不引入 DOM 到 Cocos。导入器现复制九份源码，仍拒绝覆盖任何目标文件。
 - 以 sys.localStorage 验证免费离线领取、任务日切、取消/失败/重复 Mock 回调、刷新去重、存储失败重试。
 - 后台 EVENT_HIDE 保存，EVENT_SHOW 调用 resume 生成离线机会后恢复前台计时；此生命周期仍需真机验证。
 - `config/wechat.example.json` 是安全规划示例，不是已生成的引擎项目配置。
   `npm run check:wechat` 当前预期 blocked / 退出码 2，不代表执行构建。
 - 规则与存档 schema 见 MONETIZATION.md；当前预检记录、本机账号授权、实际构建和设备验收清单见 WECHAT_BUILD.md。
 - 真实广告适配器目前显式禁用；没有广告位、开通资质及设备验证时，不启用真实平台调用。
+
+## Issue #9：推荐使用自动集成入口
+
+本页原手动挂载流程保留兼容；新项目推荐 `npm run prepare:cocos -- /path/to/project`，
+一次安装九份脚本与已编译项目扩展。用编辑器保存空 MainGame，启用扩展并执行 Develop/NightMarket 菜单，
+自动配置 Canvas、UI 相机、GameUI 和只读运行探针，不逐节点绑定。
+原 import:cocos 仍只导入脚本且拒绝已存在文件。
+完整可复制操作、真实构建执行器、输出/日志位置与 L1–L4 边界见 COCOS_INTEGRATION.md。
+当前没有实际运行该扩展或引擎构建；缺少软件、正式工程和设备的阻塞保持不变。

@@ -107,7 +107,7 @@ Cocos 仍使用 720×1280、SafeArea + Widget 等比适配；按钮在安全区�
 
 每项替换附来源 URL、作者、许可证或自有创作记录，确认修改和发布权限，避免商业游戏截屏。
 通过编辑器导入真实资源后提交其合法 meta，不手工伪造场景或 UUID。
-`npm run import:cocos -- /path/to/editor-created-project` 复制 7 份源码，预检目标，拒绝覆盖用户文件。
+`npm run import:cocos -- /path/to/editor-created-project` 现复制 9 份源码（含 Phase 4 UI 与集成探针），预检目标并拒绝覆盖用户文件；自动集成见 COCOS_INTEGRATION.md。
 旧导入目录存在时请先备份或使用新建工程；本阶段不引入自动覆盖旧工程的模式。
 
 ## 可复现验证与截图
