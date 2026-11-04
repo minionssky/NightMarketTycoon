@@ -1,8 +1,10 @@
 import {
   _decorator, Component, Node, UITransform, Label, Color, Graphics, Button,
-  Widget, SafeArea, view, ResolutionPolicy, sys, game, Game,
+  Widget, SafeArea, view, ResolutionPolicy, sys, game, Game, BlockInputEvents,
 } from 'cc';
-import { GameManager } from './core/GameCore';
+import { GameManager, getRecipe } from './core/GameCore';
+import { RecipeBookUI } from './RecipeBookUI';
+import { uiLabel, uiPanel, uiButton } from './ui/UiFactory';
 const { ccclass } = _decorator;
 
 /** Attach once to the template's Canvas; all child UI is generated at runtime. */
@@ -10,6 +12,12 @@ const { ccclass } = _decorator;
 export class GameUI extends Component {
   private model!: GameManager;
   private stage!: Node;
+  private market!: Node;
+  private book!: RecipeBookUI;
+  private bookLabel!: Label;
+  private notice!: Node;
+  private noticeText!: Label;
+  private cookLabel!: Label;
   private safe!: UITransform;
   private coins!: Label;
   private customer!: Label;
@@ -24,56 +32,60 @@ export class GameUI extends Component {
   start(): void {
     view.setDesignResolutionSize(720, 1280, ResolutionPolicy.SHOW_ALL);
     this.model = new GameManager(sys.localStorage);
-    const safe = new Node('SafeArea'); this.node.addChild(safe);
+    const safe = new Node('SafeArea'); safe.layer = this.node.layer; this.node.addChild(safe);
     this.safe = safe.addComponent(UITransform);
     const widget = safe.addComponent(Widget);
     widget.isAlignTop = widget.isAlignBottom = widget.isAlignLeft = widget.isAlignRight = true;
     widget.top = widget.bottom = widget.left = widget.right = 0;
     widget.updateAlignment(); safe.addComponent(SafeArea);
-    this.stage = new Node('NightMarket'); safe.addChild(this.stage);
+    this.stage = new Node('NightMarket'); this.stage.layer = safe.layer; safe.addChild(this.stage);
     this.stage.addComponent(UITransform).setContentSize(720, 1280);
+    this.market = new Node('Market'); this.market.layer = this.stage.layer; this.stage.addChild(this.market);
+    this.market.addComponent(UITransform).setContentSize(720, 1280);
     this.panel('Backdrop', 0, 0, 720, 1280, '#160c30');
     this.panel('NeonSign', 0, 475, 630, 150, '#6b174e');
     this.label('今晚摆个摊', 0, 500, 48, '#ffcc5c');
-    this.label('NIGHT MARKET · 烤肠小铺', 0, 445, 23, '#54eedc');
+    this.label('NIGHT MARKET · 烟火小铺', 0, 445, 23, '#54eedc');
     this.coins = this.label('', 0, 355, 34, '#ffcc5c');
     this.label('✦ 夜市开张 · 香气满街 ✦', 0, 255, 28, '#f887cf');
     this.customer = this.label('', 0, 115, 32, '#ffffff');
     this.panel('Stall', 0, -55, 600, 170, '#b73564');
-    this.label('热 烤 肠  /  滋 滋 香', 0, -35, 36, '#ffdd77');
+    this.label('夜 市 百 味 / 现 点 现 做', 0, -35, 36, '#ffdd77');
     this.label('━━━━━━━━━━━━', 0, -95, 34, '#55e3cf');
     this.details = this.label('', 0, -195, 28, '#ffffff');
     this.panel('ProgressTrack', 0, -260, 540, 20, '#432856');
-    const progress = new Node('Progress'); this.stage.addChild(progress);
+    const progress = new Node('Progress'); progress.layer = this.market.layer; this.market.addChild(progress);
     progress.setPosition(-270, -270); this.progress = progress.addComponent(Graphics);
-    this.cookButton = this.button('制作烤肠', -355, '#dd3f88', () => this.model.cook())[0];
-    [this.upgradeButton, this.upgradeLabel] = this.button('', -465, '#246f79', () => this.model.upgrade());
-    this.status = this.label('', 0, -565, 22, '#e9b8dd');
+    [this.cookButton, this.cookLabel] = this.button('制作烤肠', -335, '#dd3f88', () => this.model.cook());
+    [this.upgradeButton, this.upgradeLabel] = this.button('', -435, '#246f79', () => this.model.upgrade());
+    [, this.bookLabel] = this.button('菜谱收藏册', -535, '#53345b', () => {
+      this.market.active = false; this.book.root.active = true;
+    });
+    this.status = this.label('', 0, -615, 18, '#e9b8dd');
+    this.book = new RecipeBookUI(this.stage, this.model.snapshot, () => {
+      this.book.root.active = false; this.market.active = true;
+    }, () => this.render());
+    this.notice = new Node('UnlockNotice'); this.notice.layer = this.stage.layer; this.stage.addChild(this.notice);
+    this.notice.addComponent(UITransform).setContentSize(720, 1280);
+    this.notice.addComponent(BlockInputEvents);
+    uiPanel(this.notice, 'ModalBackdrop', 0, 0, 720, 1280, '#160c30e8');
+    uiPanel(this.notice, 'Modal', 0, 0, 650, 350, '#52234e');
+    uiLabel(this.notice, '✦ 新菜谱解锁 ✦', 0, 100, 40, '#ffd16c');
+    this.noticeText = uiLabel(this.notice, '', 0, 20, 30, '#ffffff');
+    uiButton(this.notice, '收进收藏册', -100, '#dd3f88', () => { this.notice.active = false; });
+    this.notice.active = false;
     game.on(Game.EVENT_HIDE, this.onHide, this);
     game.on(Game.EVENT_SHOW, this.onShow, this);
     this.render();
   }
-  private label(text: string, x: number, y: number, size: number, color: string, parent = this.stage): Label {
-    const node = new Node('Text'); parent.addChild(node); node.setPosition(x, y);
-    node.addComponent(UITransform).setContentSize(650, 70);
-    const label = node.addComponent(Label); label.string = text; label.fontSize = size;
-    label.lineHeight = size + 6; label.color = new Color(color);
-    label.horizontalAlign = Label.HorizontalAlign.CENTER;
-    label.verticalAlign = Label.VerticalAlign.CENTER;
-    label.overflow = Label.Overflow.SHRINK; return label;
+  private label(text: string, x: number, y: number, size: number, color: string): Label {
+    return uiLabel(this.market, text, x, y, size, color);
   }
   private panel(name: string, x: number, y: number, width: number, height: number, color: string): Node {
-    const node = new Node(name); this.stage.addChild(node); node.setPosition(x, y);
-    node.addComponent(UITransform).setContentSize(width, height);
-    const g = node.addComponent(Graphics); g.fillColor = new Color(color);
-    g.roundRect(-width / 2, -height / 2, width, height, 18); g.fill(); return node;
+    return uiPanel(this.market, name, x, y, width, height, color);
   }
   private button(text: string, y: number, color: string, action: () => unknown): [Button, Label] {
-    const node = this.panel('Button', 0, y, 580, 86, color);
-    const button = node.addComponent(Button);
-    const label = this.label(text, 0, 0, 32, '#ffffff', node);
-    node.on(Node.EventType.TOUCH_END, () => { if (button.interactable) { action(); this.render(); } }, this);
-    return [button, label];
+    return uiButton(this.market, text, y, color, () => { action(); this.render(); });
   }
   private onHide(): void { this.paused = true; this.model.save(); }
   private onShow(): void { this.paused = false; }
@@ -87,9 +99,10 @@ export class GameUI extends Component {
     const s = this.model.snapshot; const o = s.order;
     this.coins.string = `金币  ${s.coins}`;
     this.customer.string = !o || o.state === 'EXITED' ? '灯火通明，等候新顾客…' :
-      o.state === 'WAITING' ? `顾客：来份烤肠！ +${o.income}` :
-      o.state === 'COOKING' ? `制作中 · ${o.remaining.toFixed(1)} 秒` : `出餐啦！ +${o.income} 金币`;
-    this.details.string = `摊位 Lv.${s.stallLevel}  ·  每单 ${s.income} 金币`;
+      o.state === 'WAITING' ? `顾客：来份${getRecipe(o.recipeId).name}！ +${o.income}` :
+      o.state === 'COOKING' ? `制作${getRecipe(o.recipeId).name} · ${o.remaining.toFixed(1)} 秒` : `出餐啦！ +${o.income} 金币`;
+    this.cookLabel.string = o ? `制作${getRecipe(o.recipeId).name}` : '等待顾客';
+    this.details.string = `摊位 Lv.${s.stallLevel}  ·  烤肠 ${s.income} 金币/单`;
     this.cookButton.interactable = o?.state === 'WAITING';
     this.upgradeButton.interactable = s.upgradeCost !== null && s.coins >= s.upgradeCost;
     this.upgradeLabel.string = s.upgradeCost === null ? '已满级 Lv.10' : `升级摊位 · ${s.upgradeCost} 金币`;
@@ -98,6 +111,13 @@ export class GameUI extends Component {
     this.progress.rect(0, 0, 540 * fraction, 20); this.progress.fill();
     this.status.string = s.saveStatus === 'unavailable' ? '存档暂不可用，本次进度仅保留在内存' :
       s.saveStatus === 'recovered' ? '存档异常，已安全恢复初始摊位' : '自动存档 · 今晚也要好好营业';
+    this.bookLabel.string = `菜谱收藏册 · ${s.recipes.filter(recipe => recipe.unlocked).length}/${s.recipes.length}`;
+    this.book.render(s);
+    if (!this.notice.active && s.unlockNotifications.length) {
+      const event = s.unlockNotifications[0];
+      this.noticeText.string = `${getRecipe(event.recipeId).name}已加入图鉴与经营！`;
+      this.notice.active = true; this.model.acknowledgeRecipeUnlock(event.recipeId);
+    }
   }
   onDestroy(): void {
     game.off(Game.EVENT_HIDE, this.onHide, this); game.off(Game.EVENT_SHOW, this.onShow, this);

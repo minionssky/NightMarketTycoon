@@ -11,7 +11,7 @@
 - 美术：霓虹灯牌、紫/玫红/橙金配色、Q版顾客、烧烤火焰与金币特效
 
 ## 当前状态
-**Phase 0–1 已交付独立 TypeScript 核心、Cocos 动态 UI 源码与浏览器玩法演示。** 当前云端缺少 Cocos Creator，正式工程初始化、场景预览及微信构建仍未验证。详见 [验证日志](TASKS.md) 和 [Cocos 接入步骤](docs/COCOS_SETUP.md)。
+**Phase 0–2 已交付经营核心、三种菜谱收集、浏览器图鉴与 Cocos 动态 UI 源码。** 当前云端缺少 Cocos Creator，正式工程初始化、场景预览及微信构建仍未验证。详见 [验证日志](TASKS.md) 和 [Cocos 接入步骤](docs/COCOS_SETUP.md)。
 
 ## 开发流程
 1. Codex 读取 [AGENTS.md](AGENTS.md)、[docs/PRD.md](docs/PRD.md)、[TASKS.md](TASKS.md)。
@@ -38,7 +38,7 @@ npm test
 npm run preview
 ```
 
-浏览器打开 `http://127.0.0.1:4173`，可进行下单、制作、结算、升级与存档恢复。
+浏览器打开 `http://127.0.0.1:4173`，可进行下单、制作、结算、升级、菜谱图鉴与存档恢复。
 此演示直接使用同一 TS 核心，但不是 Cocos 引擎预览。
 
 自动化浏览器测试：`npx playwright install --with-deps chromium` 后执行 `npm run test:browser`。
@@ -48,3 +48,11 @@ Cocos Creator 3.8 LTS 接入：先在编辑器创建 Empty (2D) 工程，再执�
 `npm run import:cocos -- /absolute/path/to/project`；由编辑器创建 MainGame 场景，
 将 GameUI 挂到 Canvas 一次即可生成交互 UI。导入脚本拒绝覆盖已有脚本。
 完整步骤与尚未执行的验收见 [COCOS_SETUP.md](docs/COCOS_SETUP.md)。
+
+## Phase 2 菜谱收集
+
+点击“菜谱收藏册”查看已收集进度、未解锁条件和菜谱详情，点击“返回经营”继续摆摊。
+初始只有烤肠；累计收入达到 500 解锁奶茶、2000 解锁炸串。消费金币不会影响解锁。
+订单按配置顺序轮换已解锁菜谱，创建时锁定该商品的等级收益与制作时间。
+解锁提示显示时即记录已读，正常保存后重启不会重复；旧版 v1 存档保留全部经营数据。
+详细规则、迁移约定及验证方式见 [RECIPES.md](docs/RECIPES.md)。

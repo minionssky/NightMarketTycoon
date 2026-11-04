@@ -17,13 +17,34 @@
     button + button { background:#247782; } button:disabled { opacity:.45; cursor:default; }
     #status { min-height:40px; margin:20px 0 0; font-size:13px; color:#dfaccc; text-align:center; }
     footer { color:#a783aa; font-size:11px; text-align:center; } @media(max-width:360px) { h1{font-size:36px}.stall{font-size:24px} }
+    [hidden] { display:none !important } .book-link { background:transparent; border:1px solid #54c6c1; color:#72f4df; font-size:17px; }
+    .book-heading { padding:28px 0 10px; } h2 { color:#ffd16c; font-size:30px; margin:12px 0; }
+    #book-progress { color:#f1a6cf } #recipe-list { display:grid; gap:12px; margin:18px 0; }
+    .recipe-card { margin:0; min-height:100px; text-align:left; padding:18px; background:#351b43; border:1px solid #975078; }
+    .recipe-card[aria-pressed="true"] { border-color:#ffd16c; box-shadow:0 0 18px #e7a04b25; }
+    .recipe-card small { display:block; font-size:13px; font-weight:400; margin-top:10px; color:#e0bfd6; }
+    .recipe-card.locked { background:#25172e; color:#bca7c9; }
+    #recipe-detail { padding:22px; border:1px solid #9c5d7b; border-radius:14px; background:#301635; overflow-wrap:anywhere; }
+    #recipe-name { font-size:26px; color:#ffda82; margin:12px 0; } #recipe-description,#recipe-condition { color:#e2b4d1; line-height:1.8; }
+    dialog { width:min(90vw,420px); border:1px solid #ffba64; border-radius:20px; background:#32163e; color:#fff0f6; padding:26px; box-shadow:0 0 70px #eb4f8b40; }
+    dialog::backdrop { background:#10091bba; } dialog p { line-height:1.8; }
   </style>
 </head>
 <body><main>
-  <header><div class="eyebrow">NIGHT MARKET / 01</div><h1>今晚摆个摊</h1><p>灯火亮起，好生意刚刚开始。</p></header>
-  <div class="wallet"><span>我的金币</span><strong id="coins">0</strong></div>
-  <section class="scene"><div class="lanterns">◉ ◉ ◉ ◉</div><div id="customer" aria-live="polite">等候顾客…</div><div class="stall">热 烤 肠<br><small style="font-size:14px;letter-spacing:.25em">滋滋冒香 · 现点现做</small></div></section>
+  <header><div class="eyebrow">NIGHT MARKET / 02</div><h1>今晚摆个摊</h1><p>灯火亮起，好生意刚刚开始。</p></header>
+  <section id="market"><div class="wallet"><span>我的金币</span><strong id="coins">0</strong></div>
+  <section class="scene"><div class="lanterns">◉ ◉ ◉ ◉</div><div id="customer" aria-live="polite">等候顾客…</div><div class="stall">烟 火 小 铺<br><small style="font-size:14px;letter-spacing:.25em">滋滋冒香 · 现点现做</small></div></section>
   <p id="details"></p><progress id="progress" max="1" value="0" aria-label="制作进度"></progress>
   <button id="cook" disabled>制作烤肠</button><button id="upgrade" disabled>升级摊位</button>
+  <button id="open-book" class="book-link">菜谱收藏册 · <span id="book-count">1/3</span></button></section>
+  <section id="recipe-book" hidden aria-labelledby="book-title">
+    <div class="book-heading"><span class="eyebrow">COLLECTION / 烟火街头</span><h2 id="book-title">夜市百味录</h2>
+      <p id="book-progress"></p><button id="close-book" class="book-link">← 返回经营</button></div>
+    <div id="recipe-list" aria-label="菜谱列表"></div>
+    <article id="recipe-detail" aria-live="polite"><span id="recipe-rarity" class="eyebrow"></span>
+      <h3 id="recipe-name"></h3><p id="recipe-description"></p><p id="recipe-stats"></p><p id="recipe-condition"></p></article>
+  </section>
+  <dialog id="unlock-dialog" aria-labelledby="unlock-title"><div class="eyebrow">NEW RECIPE / 新的烟火</div>
+    <h2 id="unlock-title">新菜谱解锁</h2><p id="unlock-message"></p><button id="dismiss-unlock">收进收藏册</button></dialog>
   <p id="status" aria-live="polite"></p><footer>独立核心玩法演示 · 非 Cocos 编辑器预览</footer>
 </main><script type="module" src="/game.js"></script></body></html>

@@ -21,11 +21,13 @@
 - [ ] Cocos 编辑器实际预览验证
 
 ## Phase 2：菜谱收集
-- [ ] RecipeConfig、RecipeManager
-- [ ] 烤肠（初始）、奶茶（累计收入 500）、炸串（累计收入 2000）
-- [ ] RecipeBookUI：已解锁、未解锁、详细信息
-- [ ] 图鉴与经营商品共用解锁状态
-- [ ] 兼容 Phase 1 存档，覆盖重复解锁测试
+- [x] RecipeConfig、RecipeManager
+- [x] 烤肠（初始）、奶茶（累计收入 500）、炸串（累计收入 2000）
+- [x] RecipeBookUI 浏览器交互：已解锁、未解锁、详细信息、进度与返回
+- [x] Cocos RecipeBookUI 动态源码与官方 3.8.8 UI 类型检查
+- [ ] Cocos RecipeBookUI 编辑器实际交互/安全区验证
+- [x] 图鉴与经营商品共用解锁状态
+- [x] 兼容 Phase 1 存档，覆盖重复解锁测试
 
 ## Phase 3：视觉效果
 - [ ] 国潮霓虹夜市主界面与 Q 版顾客
@@ -75,3 +77,39 @@ Phase 0 的前三项和 Cocos 引擎运行验收保留未勾选。
   （旧页面 pagehide 会保存内存进度）；最终全部通过。
 - `git diff --check`：通过。`AGENTS.md`、`docs/PRD.md` 保持原文。
 - 新增 GitHub Actions 流程；云端 CI 状态以 PR 检查结果为准，不以本地通过代替。
+
+### 2026-11-04 · Issue #3 / Phase 2
+
+开发前已检查 PR #2：open、未合并，head 为 `b81e6a9`。
+分支 `codex/issue-3-recipes` 基于 `origin/codex/issue-1-phase-0-1` 创建；
+没有从旧 main 重写第一阶段核心。Phase 2 PR 以第一阶段分支为 base，只审查增量。
+
+实现：
+- 只读 RecipeConfig：ID、菜名、基础价格/时间、章节、稀有度、解锁条件与描述。
+- RecipeManager 是经营订单池和图鉴的共同来源；按累计收入推导三种解锁，花钱不回锁。
+- 订单按已解锁配置顺序轮换，创建时锁定该商品在当前等级的收益和耗时。
+- 保留 v1 键与版本，新增可选 notifiedRecipeIds，只记录已读提示，不另存 unlocked 状态。
+  旧存档经营字段不变，新字段非法时只修复新字段；通知显示即记录已读并保存。
+- 浏览器收藏册和 Cocos RecipeBookUI 动态源码同步包含入口、返回、进度、条件、详情及弹窗。
+- Cocos 通用控件工厂显式继承父节点 layer；导入脚本扩展至四份源码，仍拒绝覆盖已有文件。
+
+实际验证（Node v24.22.1 / TypeScript 5.9.3 / 官方 Cocos 类型 3.8.8 / 系统 Chromium）：
+- `npm run typecheck`：核心严格检查与全部 Cocos 动态 UI 类型检查通过。
+- `npm test`：21 项通过，0 失败（第一阶段 11 项 + 菜谱 10 项）。
+  覆盖 499/500、1999/2000，跳跃解锁/重复检查、花费不回锁、旧存档字段保留、
+  新字段损坏修复、通知去重/重启、实际结算解锁、三菜谱轮换、Lv1–10 公式、
+  奶茶/炸串在等待和制作中跨 Lv4/Lv7 升级锁定、存储失败重试和快照隔离。
+- 原烤肠升级测试夹具 coins/totalEarned 从 1000 改为 400，保持只解锁烤肠，
+  原收入与耗时断言全部保留；多商品情形由新增测试覆盖。导入器测试相应验证四份源码。
+- `CHROMIUM_PATH=/usr/bin/chromium npm run test:browser`：5 项通过，0 失败，约 27.3 秒。
+  真实 Chromium + Playwright 虚拟时钟：原 20 连单回归、初始图鉴 1/3、锁定详情、
+  320/390/720 宽度、500 解锁奶茶并制作/升级锁定、1999 跨阈值解锁炸串并制作、
+  图鉴 3/3、旧存档迁移、弹窗未关闭即刷新不重复；所有页面脚本错误为 0。
+- 已检查 `artifacts/recipe-book-locked.png` 和 `artifacts/recipe-book-complete.png`。
+- `git diff --check`：通过。AGENTS.md、docs/PRD.md 未修改。
+
+未验证：Cocos Creator 仍未安装；真实工程初始化、编辑器图鉴预览、引擎内触摸、
+弹窗拦截、安全区、后台恢复，以及微信构建/开发者工具/真机都未执行。
+图鉴浏览器通过、Cocos 类型检查通过不代表引擎验证通过。
+规则与迁移说明见 `docs/RECIPES.md`，工程接入见 `docs/COCOS_SETUP.md`。
+CI 实际状态以 Phase 2 PR 的 GitHub Actions 检查为准；未自动合并 PR。
